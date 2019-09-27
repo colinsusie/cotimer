@@ -6,16 +6,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// 内存项
 typedef struct blockitem {
     struct blockitem *next;
     uint32_t flag;
 } blockitem_t;
 
+// 内存块
 typedef struct memblock {
     struct memblock *next;
     char buffer[0];
 } memblock_t;
 
+// 分配器
 typedef struct fallocator {
     memblock_t *memblock;
     uint32_t blocksize;
@@ -29,7 +32,7 @@ void fallocator_init(fallocator_t *alloc, uint32_t blocksize, uint32_t itemsize)
 void fallocator_free(fallocator_t *alloc);
 // 创建内存项
 void* fallocator_newitem(fallocator_t *alloc);
-// 释放内存器
+// 释放内存项
 bool fallocator_freeitem(fallocator_t *alloc, void *item);
 // 判断内存项是否已经释放 
 bool fallocator_isfree(fallocator_t *alloc, void *item);

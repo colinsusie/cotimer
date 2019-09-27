@@ -9,7 +9,7 @@ typedef struct clinknode {
     struct clinknode *prev;
 } clinknode_t;
 
-// 初始化链表头
+// 初始化链表头：前后都指向自己
 static inline void clinklist_init(clinknode_t *head) {
     head->prev = head;
     head->next = head;
@@ -46,9 +46,9 @@ static inline void clinklist_remote(clinknode_t *node) {
 // 将链表1的结点取出来，放到链表2
 static inline void clinklist_splice(clinknode_t *head1, clinknode_t *head2) {
     if (!clinklist_is_empty(head1)) {
-        clinknode_t *first = head1->next;       // 第1个链表
-        clinknode_t *last = head1->prev;        // 最后1个链表
-        clinknode_t *at = head2->next;          // 插在这个结点前面
+        clinknode_t *first = head1->next;       // 第1个结点
+        clinknode_t *last = head1->prev;        // 最后1个结点
+        clinknode_t *at = head2->next;          // 插在第2个链表的这个结点前面
         first->prev = head2;
         head2->next = first;
         last->next = at;

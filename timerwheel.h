@@ -20,8 +20,8 @@
 // 第n个轮的长度
 #define TVN_SIZE (1 << TVN_BITS)
 // 掩码：取模或整除用
-#define TVN_MASK (TVN_SIZE - 1)
 #define TVR_MASK (TVR_SIZE - 1)
+#define TVN_MASK (TVN_SIZE - 1)
 
 // 定时器回调函数
 typedef void (*timer_cb_t)(void*);
@@ -35,10 +35,12 @@ typedef struct timernode {
     uint32_t expire;              // 到期时间
 } timernode_t;
 
+// 第1个轮
 typedef struct tvroot {
     clinknode_t vec[TVR_SIZE];
 } tvroot_t;
 
+// 后面几个轮
 typedef struct tvnum {
     clinknode_t vec[TVN_SIZE];
 } tvnum_t;
@@ -56,11 +58,11 @@ typedef struct timerwheel {
 } timerwheel_t;
 
 
-// 初始化时间轮
+// 初始化时间轮，interval为每帧的间隔，currtime为当前时间
 void timerwheel_init(timerwheel_t *tw, uint16_t interval, uint64_t currtime);
-// 初始化时间结点
+// 初始化时间结点：cb为回调，ud为用户数据
 void timerwheel_node_init(timernode_t *node, timer_cb_t cb, void *ud);
-// 增加时间结点
+// 增加时间结点，ticks为触发间隔(注意是以interval为单位)
 void timerwheel_add(timerwheel_t *tw, timernode_t *node, uint32_t ticks);
 // 删除结点
 int timerwheel_del(timerwheel_t *tw, timernode_t *node);
