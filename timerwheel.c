@@ -1,5 +1,8 @@
 #include "timerwheel.h"
 
+#define FIRST_INDEX(v) ((v) & TVR_MASK)
+#define NTH_INDEX(v, n) (((v) >> (TVR_BITS + (n) * TVN_BITS)) & TVN_MASK)
+
 void timerwheel_init(timerwheel_t *tw, uint16_t interval, uint64_t currtime) {
     memset(tw, 0, sizeof(*tw));
     tw->interval = interval;
@@ -27,14 +30,14 @@ static void _timerwheel_add(timerwheel_t *tw, timernode_t *node) {
     uint32_t idx = expire - tw->currtick;
     clinknode_t *head;
     if (idx < TVR_SIZE) {
-        head = tw->tvroot.vec + (expire & TVR_MASK);
+        head = tw->tvroot.vec + FIRST_INDEX(expire);
     } else {
         int i;
         uint64_t sz;
         for (i = 0; i < 4; ++i) {
             sz = (1ULL << (TVR_BITS + (i+1) * TVN_BITS));
             if (idx < sz) {
-                idx = (expire >> (TVR_BITS + i * TVN_BITS)) & TVN_MASK;
+                idx = NTH_INDEX(expire, i);
                 head = tw->tv[i].vec + idx;
                 break;
             }
@@ -68,8 +71,6 @@ void _timerwheel_cascade(timerwheel_t *tw, tvnum_t *tv, int idx) {
 }
 
 void _timerwheel_tick(timerwheel_t *tw) {
-    #define TIMER_INDEX(N) ((tw->currtick >> (TVR_BITS + (N) * TVN_BITS)) & TVN_MASK)
-
     ++tw->currtick;
 
     uint32_t currtick = tw->currtick;
@@ -78,7 +79,7 @@ void _timerwheel_tick(timerwheel_t *tw) {
         int i = 0;
         int idx;
         do {
-            idx = TIMER_INDEX(i);
+            idx = NTH_INDEX(tw->currtick, i);
             _timerwheel_cascade(tw, &(tw->tv[i]), idx);
         } while (idx == 0 && ++i < 4);
     }
