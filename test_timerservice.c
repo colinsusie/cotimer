@@ -19,13 +19,11 @@ void on_timer(void *ud) {
     printf("on_timer: %llu\n", gettime());
     ++count;
     if (count == 10)
-        ts_del_timer(sv, NULL, &thandle);
+        ts_del_timer(sv, &thandle);
 }
 
 void run() {
-    int i = 0;
     while (1) {
-        ++i;
         usleep(1000);
         ts_update(sv, gettime());
     }
@@ -34,13 +32,13 @@ void run() {
 
 int main(int argc, char const *argv[])
 {
-    sv = ts_init(1, gettime());
+    sv = ts_init(10, gettime());
 
-    thandle = ts_add_timer(sv, NULL, 5, 1000, on_timer, NULL);
+    thandle = ts_add_timer(sv, 100, 100, on_timer, NULL);
 
     run();
 
-    ts_del_timer(sv, NULL, &thandle);
+    ts_del_timer(sv, &thandle);
     ts_free(sv);
     return 0;
 }

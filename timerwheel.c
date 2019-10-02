@@ -98,10 +98,9 @@ void _timerwheel_tick(timerwheel_t *tw) {
 
 void timerwheel_update(timerwheel_t *tw, uint64_t currtime) {
     if (currtime > tw->lasttime) {
-        int diff = currtime - tw->lasttime - tw->remainder;
+        int diff = currtime - tw->lasttime + tw->remainder;
         int intv = tw->interval;
         tw->lasttime = currtime;
-        
         while (diff >= intv) {
             diff -= intv;
             _timerwheel_tick(tw);

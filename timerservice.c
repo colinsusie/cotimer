@@ -3,11 +3,11 @@
 #include <string.h>
 
 typedef struct timeritem {
-	uint32_t loop;
     timerservice_t *sv;
-	void *ud;
     timer_cb_t cb;
 	timernode_t node;
+	void *ud;
+    uint32_t loop;
 } timeritem_t;
 
 timerservice_t* ts_init(uint16_t interval, uint64_t currtime) {
@@ -33,7 +33,7 @@ void _on_timer(void *ud) {
     }
 }
 
-void* ts_add_timer(timerservice_t *sv, void *group, uint32_t delay, uint32_t loop, timer_cb_t cb, void *ud) {
+void* ts_add_timer(timerservice_t *sv, uint32_t delay, uint32_t loop, timer_cb_t cb, void *ud) {
     timeritem_t *item =  fallocator_newitem(&sv->alloc);
     item->sv = sv;
     item->loop = loop;
@@ -44,7 +44,7 @@ void* ts_add_timer(timerservice_t *sv, void *group, uint32_t delay, uint32_t loo
     return item;
 }
 
-void ts_del_timer(timerservice_t *sv, void *group, void **handle) {
+void ts_del_timer(timerservice_t *sv, void **handle) {
     if (!handle || !*handle)
         return;
     if (!fallocator_isfree(&sv->alloc, *handle)) {
