@@ -28,8 +28,8 @@ typedef void (*timer_cb_t)(void*);
 
 // 定时器结点
 typedef struct timernode {
-    struct linknode *next;        // 下一个结点
-    struct linknode *prev;        // 上一个结点
+    clinknode_t *next;        // 下一个结点
+    clinknode_t *prev;        // 上一个结点
     void *userdata;               // 用户数据
     timer_cb_t callback;          // 回调函数
     uint32_t expire;              // 到期时间
