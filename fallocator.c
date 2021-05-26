@@ -2,6 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stddef.h>
 
 #define MAX_BLOCK_SIZE 16*1024
 #define MIN_BLOCK_SIZE 4096
@@ -34,7 +35,7 @@ void* fallocator_newitem(fallocator_t *alloc) {
         alloc->memblock = block;
         int idx = 0;
         int itemsize = alloc->itemsize;
-        int blocksize = alloc->blocksize;
+        int blocksize = alloc->blocksize - offsetof(memblock_t, buffer);
         while (idx + itemsize <= blocksize) {
             blockitem_t *item = (blockitem_t*)(block->buffer + idx);
             item->next = alloc->freeitem;
